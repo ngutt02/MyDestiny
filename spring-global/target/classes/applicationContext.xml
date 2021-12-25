@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+	<!-- it is going to scan all its subpackages -->
+	<context:component-scan base-package="com.pack" />
+
+	<bean id="ds1" class="com.atomikos.jdbc.AtomikosDataSourceBean"
+		init-method="init" destroy-method="close">
+		<property name="uniqueResourceName" value="OraclePool" />
+		<property name="xaDataSourceClassName"
+			value="oracle.jdbc.xa.client.OracleXADataSource" />
+		<property name="poolSize" value="5" />
+		<property name="xaProperties">
+			<props>
+				<prop key="databaseName">xe</prop>
+				<prop key="user">system</prop>
+				<prop key="password">tiger</prop>
+				<prop key="URL">jdbc:oracle:thin:@localhost:1521:xe</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="ds2" class="com.atomikos.jdbc.AtomikosDataSourceBean"
+		init-method="init" destroy-method="close">
+		<property name="uniqueResourceName" value="MysqlPool" />
+		<property name="xaDataSourceClassName"
+			value="com.mysql.cj.jdbc.MysqlXADataSource" />
+		<property name="poolSize" value="3" />
+		<property name="xaProperties">
+			<props>
+				<prop key="databaseName">test</prop>
+				<prop key="user">root</prop>
+				<prop key="password">root</prop>
+				<prop key="URL">jdbc:mysql://localhost:3306/test</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="atm"
+		class="com.atomikos.icatch.jta.UserTransactionManager"
+		init-method="init" destroy-method="close" />
+
+	<bean id="transactionManager"
+		class="org.springframework.transaction.jta.JtaTransactionManager">
+		<property name="transactionManager" ref="atm" />
+		<property name="allowCustomIsolationLevels" value="true" />
+	</bean>
+
+	<tx:annotation-driven />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</beans>
